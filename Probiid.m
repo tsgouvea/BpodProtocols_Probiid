@@ -52,12 +52,12 @@ if isempty(fieldnames(TaskParameters))
     % Reward
     TaskParameters.GUI.ProbRwdAlphaL = 2; %betarnd(2,5)
     TaskParameters.GUI.ProbRwdBetaL = 5; %betarnd(2,5)
-    TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbRwdAlphaL,TaskParameters.GUI.ProbRwdBetaL)
+    TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbRwdAlphaL,TaskParameters.GUI.ProbRwdBetaL);
     TaskParameters.GUIMeta.ProbRwdL.Style = 'text';
 
     TaskParameters.GUI.ProbRwdAlphaR = 2; %betarnd(2,5)
     TaskParameters.GUI.ProbRwdBetaR = 5; %betarnd(2,5)
-    TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbRwdAlphaR,TaskParameters.GUI.ProbRwdBetaR)
+    TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbRwdAlphaR,TaskParameters.GUI.ProbRwdBetaR);
     TaskParameters.GUIMeta.ProbRwdR.Style = 'text';
 
     TaskParameters.GUI.blockLenMin = 50;
@@ -75,17 +75,14 @@ BpodParameterGUI('init', TaskParameters);
 
 BpodSystem.Data.Custom.Baited.Left = true;
 BpodSystem.Data.Custom.Baited.Right = true;
-BpodSystem.Data.Custom.LeftClickTrain{1} = [];
-BpodSystem.Data.Custom.RightClickTrain{1} = [];
-if BpodSystem.Data.Custom.Baited.Left
-    BpodSystem.Data.Custom.LeftClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.FictClickRate,TaskParameters.GUI.FictClickTrainDur);
+
+BpodSystem.Data.Custom.LeftClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.FictClickRate,TaskParameters.GUI.FictClickTrainDur);
+BpodSystem.Data.Custom.RightClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.FictClickRate,TaskParameters.GUI.FictClickTrainDur);
+if ~BpodSystem.Data.Custom.Baited.Left
+    BpodSystem.Data.Custom.LeftClickTrain{1} = min([ BpodSystem.Data.Custom.LeftClickTrain{1}, BpodSystem.Data.Custom.RightClickTrain{1}]);
 end
-if BpodSystem.Data.Custom.Baited.Right
-    BpodSystem.Data.Custom.RightClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.FictClickRate,TaskParameters.GUI.FictClickTrainDur);
-end
-if ~BpodSystem.EmulatorMode
-    SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{iTrial+1}, ones(1,length(BpodSystem.Data.Custom.RightClickTrain{iTrial+1}))*5);
-    SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{iTrial+1}, ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{iTrial+1}))*5);
+if ~BpodSystem.Data.Custom.Baited.Right
+    BpodSystem.Data.Custom.RightClickTrain{1} = min([ BpodSystem.Data.Custom.LeftClickTrain{1}, BpodSystem.Data.Custom.RightClickTrain{1}]);
 end
 
 BpodSystem.Data.Custom.BlockNumber = 1;
@@ -108,11 +105,16 @@ BpodSystem.Data.Custom.Rig = getenv('computername');
 BpodSystem.Data.Custom = orderfields(BpodSystem.Data.Custom);
 
 %% Set up PulsePal
+load PulsePalParamStimulus.mat
 load PulsePalParamFeedback.mat
+BpodSystem.Data.Custom.PulsePalParamStimulus=PulsePalParamStimulus;
 BpodSystem.Data.Custom.PulsePalParamFeedback=PulsePalParamFeedback;
+clear PulsePalParamFeedback PulsePalParamStimulus
 BpodSystem.SoftCodeHandlerFunction = 'SoftCodeHandler';
 if ~BpodSystem.EmulatorMode
-    ProgramPulsePal(BpodSystem.Data.Custom.PulsePalParamFeedback);
+    ProgramPulsePal(BpodSystem.Data.Custom.PulsePalParamStimulus);
+    SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.RightClickTrain{1}))*5);
+    SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{1}))*5);
 end
 
 %% Initialize plots
