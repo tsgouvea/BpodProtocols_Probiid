@@ -61,21 +61,21 @@ end
 if nTrialsThisBlock >= BpodSystem.Data.Custom.BlockLen(end)
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial)+1;
     BpodSystem.Data.Custom.BlockLen(end+1) = drawBlockLen(TaskParameters);
-    if TaskParameters.GUI.Unbias:
-      biasL = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 1)/sum(BpodSystem.Data.Custom.Rewarded);
-      biasR = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 0)/sum(BpodSystem.Data.Custom.Rewarded);
-
-      muL = 2*TaskParameters.GUI.ProbRwdMean*(1-biasL);
-      muR = 2*TaskParameters.GUI.ProbRwdMean*(1-biasR);
-
-      BetaBL = TaskParameters.GUI.ProbBetaA*((1-muL)/muL);
-      BetaBR = TaskParameters.GUI.ProbBetaA*((1-muR)/muR);
-
-      TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbBetaA,BetaBL);
-      TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbBetaA,BetaBR);
+    if TaskParameters.GUI.Unbias
+        biasL = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 1)/sum(BpodSystem.Data.Custom.Rewarded);
+        biasR = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 0)/sum(BpodSystem.Data.Custom.Rewarded);
+        
+        muL = 2*TaskParameters.GUI.ProbRwdMean*(1-biasL);
+        muR = 2*TaskParameters.GUI.ProbRwdMean*(1-biasR);
+        
+        BetaBL = TaskParameters.GUI.ProbBetaA*((1-muL)/muL);
+        BetaBR = TaskParameters.GUI.ProbBetaA*((1-muR)/muR);
+        
+        TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbBetaA,BetaBL);
+        TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbBetaA,BetaBR);
     else
-      TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbBetaA,TaskParameters.GUI.ProbBetaA*((1-TaskParameters.GUI.ProbRwdMean)/TaskParameters.GUI.ProbRwdMean));
-      TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbBetaA,TaskParameters.GUI.ProbBetaA*((1-TaskParameters.GUI.ProbRwdMean)/TaskParameters.GUI.ProbRwdMean));
+        TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbBetaA,TaskParameters.GUI.ProbBetaA*((1-TaskParameters.GUI.ProbRwdMean)/TaskParameters.GUI.ProbRwdMean));
+        TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbBetaA,TaskParameters.GUI.ProbBetaA*((1-TaskParameters.GUI.ProbRwdMean)/TaskParameters.GUI.ProbRwdMean));
     end
 else
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial);
@@ -134,18 +134,18 @@ switch TaskParameters.GUIMeta.FictDelaySelection.String{TaskParameters.GUI.FictD
             TaskParameters.GUI.FictDelayMax,TaskParameters.GUI.FictDelayTau);
     case 'Uniform'
         TaskParameters.GUI.FictDelay = TaskParameters.GUI.FictDelayMin + (TaskParameters.GUI.FictDelayMax-TaskParameters.GUI.FictDelayMin)*rand(1);
-
-TaskParameters.GUI.FictDelay = max(TaskParameters.GUI.FictDelayMin,min(TaskParameters.GUI.FictDelay,TaskParameters.GUI.FictDelayMax));
-
-% %% send bpod status to server
-% try
-%     BpodSystem.Data.Custom.Script = 'receivebpodstatus.php';
-%     %create a common "outcome" vector
-%     outcome = BpodSystem.Data.Custom.ChoiceLeft(1:iTrial); %1=left, 0=right
-%     outcome(BpodSystem.Data.Custom.EarlyCout(1:iTrial))=3; %early C withdrawal=3
-%     outcome(BpodSystem.Data.Custom.Jackpot(1:iTrial))=4; %jackpot=4
-%     outcome(BpodSystem.Data.Custom.EarlySout(1:iTrial))=5; %early S withdrawal=5
-%     SendTrialStatusToServer(BpodSystem.Data.Custom.Script,BpodSystem.Data.Custom.Rig,outcome,BpodSystem.Data.Custom.Subject,BpodSystem.CurrentProtocolName);
-% catch
-% end
+        
+        TaskParameters.GUI.FictDelay = max(TaskParameters.GUI.FictDelayMin,min(TaskParameters.GUI.FictDelay,TaskParameters.GUI.FictDelayMax));
+        
+        % %% send bpod status to server
+        % try
+        %     BpodSystem.Data.Custom.Script = 'receivebpodstatus.php';
+        %     %create a common "outcome" vector
+        %     outcome = BpodSystem.Data.Custom.ChoiceLeft(1:iTrial); %1=left, 0=right
+        %     outcome(BpodSystem.Data.Custom.EarlyCout(1:iTrial))=3; %early C withdrawal=3
+        %     outcome(BpodSystem.Data.Custom.Jackpot(1:iTrial))=4; %jackpot=4
+        %     outcome(BpodSystem.Data.Custom.EarlySout(1:iTrial))=5; %early S withdrawal=5
+        %     SendTrialStatusToServer(BpodSystem.Data.Custom.Script,BpodSystem.Data.Custom.Rig,outcome,BpodSystem.Data.Custom.Subject,BpodSystem.CurrentProtocolName);
+        % catch
+        % end
 end
