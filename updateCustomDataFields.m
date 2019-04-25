@@ -61,8 +61,22 @@ end
 if nTrialsThisBlock >= BpodSystem.Data.Custom.BlockLen(end)
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial)+1;
     BpodSystem.Data.Custom.BlockLen(end+1) = drawBlockLen(TaskParameters);
-    TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbRwdAlphaL,TaskParameters.GUI.ProbRwdBetaL);
-    TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbRwdAlphaR,TaskParameters.GUI.ProbRwdBetaR);
+    if TaskParameters.GUI.Unbias:
+      biasL = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 1)/sum(BpodSystem.Data.Custom.Rewarded);
+      biasR = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 0)/sum(BpodSystem.Data.Custom.Rewarded);
+
+      muL = 2*TaskParameters.GUI.ProbRwdMean*(1-biasL);
+      muR = 2*TaskParameters.GUI.ProbRwdMean*(1-biasR);
+
+      BetaBL = TaskParameters.GUI.ProbBetaA*((1-muL)/muL);
+      BetaBR = TaskParameters.GUI.ProbBetaA*((1-muR)/muR);
+
+      TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbBetaA,BetaBL);
+      TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbBetaA,BetaBR);
+    else
+      TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbBetaA,TaskParameters.GUI.ProbBetaA*((1-TaskParameters.GUI.ProbRwdMean)/TaskParameters.GUI.ProbRwdMean));
+      TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbBetaA,TaskParameters.GUI.ProbBetaA*((1-TaskParameters.GUI.ProbRwdMean)/TaskParameters.GUI.ProbRwdMean));
+    end
 else
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial);
 end

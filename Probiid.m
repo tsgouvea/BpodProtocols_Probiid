@@ -50,20 +50,22 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','RewardDelay','Grace'};
 
     % Reward
-    TaskParameters.GUI.ProbRwdAlphaL = 2; %betarnd(2,5)
-    TaskParameters.GUI.ProbRwdBetaL = 5; %betarnd(2,5)
-    TaskParameters.GUI.ProbRwdL = betarnd(TaskParameters.GUI.ProbRwdAlphaL,TaskParameters.GUI.ProbRwdBetaL);
+    TaskParameters.GUI.ProbRwdMean = 0.4;
+    TaskParameters.GUI.ProbBetaA = 3;
+    TaskParameters.GUI.ProbRwdL = TaskParameters.GUI.ProbRwdMean;
     TaskParameters.GUIMeta.ProbRwdL.Style = 'text';
-
-    TaskParameters.GUI.ProbRwdAlphaR = 2; %betarnd(2,5)
-    TaskParameters.GUI.ProbRwdBetaR = 5; %betarnd(2,5)
-    TaskParameters.GUI.ProbRwdR = betarnd(TaskParameters.GUI.ProbRwdAlphaR,TaskParameters.GUI.ProbRwdBetaR);
+    TaskParameters.GUI.ProbRwdR = TaskParameters.GUI.ProbRwdMean;
     TaskParameters.GUIMeta.ProbRwdR.Style = 'text';
 
-    TaskParameters.GUI.blockLenMin = 50;
-    TaskParameters.GUI.blockLenMax = 100;
+    TaskParameters.GUI.Unbias = true;
+    TaskParameters.GUIMeta.Unbias.Style = 'checkbox';
+    TaskParameters.GUI.ProbRwdBias = 0.5;
+    TaskParameters.GUIMeta.ProbRwdBias.Style = 'text';
+
+    TaskParameters.GUI.blockLenMin = 80;
+    TaskParameters.GUI.blockLenMax = 120;
     TaskParameters.GUI.rewardAmount = 30;
-    TaskParameters.GUIPanels.Reward = {'rewardAmount','blockLenMin','blockLenMax', 'ProbRwdAlphaL','ProbRwdBetaL','ProbRwdL', 'ProbRwdAlphaR','ProbRwdBetaR','ProbRwdR'};
+    TaskParameters.GUIPanels.Reward = {'rewardAmount','blockLenMin','blockLenMax', 'ProbRwdMean','ProbBetaA','ProbRwdL','ProbRwdR','Unbias','ProbRwdBias'};
 
     TaskParameters.GUI = orderfields(TaskParameters.GUI);
 end
@@ -86,6 +88,8 @@ if ~BpodSystem.Data.Custom.Baited.Right
 end
 
 BpodSystem.Data.Custom.BlockNumber = 1;
+% BpodSystem.Data.Custom.BetaBL = TaskParameters.GUI.ProbBetaA*((1-TaskParameters.GUI.ProbRwdMean)/TaskParameters.GUI.ProbRwdMean);
+% BpodSystem.Data.Custom.BetaBR = TaskParameters.GUI.ProbBetaA*((1-TaskParameters.GUI.ProbRwdMean)/TaskParameters.GUI.ProbRwdMean);
 BpodSystem.Data.Custom.BlockProbRwdL = TaskParameters.GUI.ProbRwdL;
 BpodSystem.Data.Custom.BlockProbRwdR = TaskParameters.GUI.ProbRwdR;
 BpodSystem.Data.Custom.BlockLen = drawBlockLen(TaskParameters);
