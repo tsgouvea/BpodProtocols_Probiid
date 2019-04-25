@@ -61,9 +61,10 @@ end
 if nTrialsThisBlock >= BpodSystem.Data.Custom.BlockLen(end)
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial)+1;
     BpodSystem.Data.Custom.BlockLen(end+1) = drawBlockLen(TaskParameters);
+    TaskParameters.GUI.ProbRwdBias = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 1)/sum(BpodSystem.Data.Custom.Rewarded);
     if TaskParameters.GUI.Unbias
-        biasL = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 1)/sum(BpodSystem.Data.Custom.Rewarded);
-        biasR = sum(BpodSystem.Data.Custom.Rewarded & BpodSystem.Data.Custom.ChoiceLeft == 0)/sum(BpodSystem.Data.Custom.Rewarded);
+        biasL = TaskParameters.GUI.ProbRwdBias;
+        biasR = 1 - TaskParameters.GUI.ProbRwdBias;
         
         muL = 2*TaskParameters.GUI.ProbRwdMean*(1-biasL);
         muR = 2*TaskParameters.GUI.ProbRwdMean*(1-biasR);
