@@ -139,9 +139,6 @@ switch TaskParameters.GUIMeta.FictDelaySelection.String{TaskParameters.GUI.FictD
             TaskParameters.GUI.FictDelayMax,TaskParameters.GUI.FictDelayTau);
     case 'Uniform'
         TaskParameters.GUI.FictDelay = TaskParameters.GUI.FictDelayMin + (TaskParameters.GUI.FictDelayMax-TaskParameters.GUI.FictDelayMin)*rand(1);
-        
-        TaskParameters.GUI.FictDelay = max(TaskParameters.GUI.FictDelayMin,min(TaskParameters.GUI.FictDelay,TaskParameters.GUI.FictDelayMax));
-        
         % %% send bpod status to server
         % try
         %     BpodSystem.Data.Custom.Script = 'receivebpodstatus.php';
@@ -154,3 +151,4 @@ switch TaskParameters.GUIMeta.FictDelaySelection.String{TaskParameters.GUI.FictD
         % catch
         % end
 end
+TaskParameters.GUI.FictDelay = max(TaskParameters.GUI.FictDelayMin,min(TaskParameters.GUI.FictDelay,TaskParameters.GUI.FictDelayMax));
