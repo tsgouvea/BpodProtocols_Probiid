@@ -41,7 +41,9 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUIMeta.FictDelay.Style = 'text';
     TaskParameters.GUI.FictClickTrainDur = 1;
     TaskParameters.GUI.FictClickRate = 100;
-    TaskParameters.GUIPanels.WouldHaveReward = {'FictBNCout','FictDelaySelection','FictDelayMin','FictDelayMax','FictDelayTau','FictDelay','FictClickTrainDur','FictClickRate'};
+    TaskParameters.GUI.AllowSecondChance = 0;
+    TaskParameters.GUIMeta.AllowSecondChance.Style = 'checkbox';
+    TaskParameters.GUIPanels.WouldHaveReward = {'FictBNCout','AllowSecondChance','FictDelaySelection','FictDelayMin','FictDelayMax','FictDelayTau','FictDelay','FictClickTrainDur','FictClickRate'};
 
     % Side Ports ("waiting for feedback")
     TaskParameters.GUI.EarlySoutPenalty = 0;

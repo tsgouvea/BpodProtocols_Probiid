@@ -42,6 +42,8 @@ end
 BpodSystem.Data.Custom.EarlyCout(iTrial) = any(strcmp('EarlyCout',statesThisTrial));
 BpodSystem.Data.Custom.EarlySout(iTrial) = any(strcmp('EarlySout',statesThisTrial));
 BpodSystem.Data.Custom.Rewarded(iTrial) = any(strncmp('water_',statesThisTrial,6));
+BpodSystem.Data.Custom.ScndAllowed(iTrial) = TaskParameters.GUI.AllowSecondChance;
+BpodSystem.Data.Custom.ScndRwd(iTrial) = any(strncmp('scnd_chance_water_',statesThisTrial,18));
 BpodSystem.Data.Custom.RewardMagnitude(iTrial) = TaskParameters.GUI.rewardAmount;
 
 %% initialize next trial values
@@ -51,6 +53,8 @@ BpodSystem.Data.Custom.EarlySout(iTrial+1) = false;
 BpodSystem.Data.Custom.Rewarded(iTrial+1) = false;
 BpodSystem.Data.Custom.CenterDelay(iTrial+1) = NaN;
 BpodSystem.Data.Custom.FictDelay(iTrial+1) = NaN;
+BpodSystem.Data.Custom.ScndAllowed(iTrial+1) = false;
+BpodSystem.Data.Custom.ScndRwd(iTrial+1) = false;
 
 %% Block count
 nTrialsThisBlock = sum(BpodSystem.Data.Custom.BlockNumber == BpodSystem.Data.Custom.BlockNumber(iTrial));

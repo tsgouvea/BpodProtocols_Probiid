@@ -27,6 +27,7 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.OutcomePlot.CurrentTrialCircle = line(-1,0.5, 'LineStyle','none','Marker','o','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.CurrentTrialCross = line(-1,0.5, 'LineStyle','none','Marker','+','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.Rewarded = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','g','MarkerFace','g', 'MarkerSize',6);
+    GUIHandles.Axes.OutcomePlot.ScndRewarded = line(-1,1, 'LineStyle','none','Marker','x','MarkerEdge','g','MarkerFace','g', 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.Unrewarded = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','r','MarkerFace','r', 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.NoResponse = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.EarlyCout = line(-1,0, 'LineStyle','none','Marker','d','MarkerEdge','none','MarkerFace','b', 'MarkerSize',6);
@@ -97,6 +98,11 @@ if nargin > 0
         Xdata = indxToPlot(ndxRwd);
         Ydata = ChoiceLeft(indxToPlot); Ydata = Ydata(ndxRwd);
         set(GUIHandles.Axes.OutcomePlot.Rewarded, 'xdata', Xdata, 'ydata', Ydata);
+        
+        ndxRwd = Data.Custom.ScndRwd(indxToPlot) == 1;
+        Xdata = indxToPlot(ndxRwd);
+        Ydata = -ChoiceLeft(indxToPlot)+1; Ydata = Ydata(ndxRwd);
+        set(GUIHandles.Axes.OutcomePlot.ScndRewarded, 'xdata', Xdata, 'ydata', Ydata);
 
         ndxUrwd = Rewarded(indxToPlot) == 0 & not(Data.Custom.EarlyCout(indxToPlot)|Data.Custom.EarlySout(indxToPlot));
         Xdata = indxToPlot(ndxUrwd);
@@ -128,7 +134,7 @@ if nargin > 0
     end
     %Cumulative Reward Amount
     R = Data.Custom.RewardMagnitude;
-    ndxRwd = Data.Custom.Rewarded;
+    ndxRwd = Data.Custom.Rewarded | Data.Custom.ScndRwd;
     C = zeros(size(R)); C(Data.Custom.ChoiceLeft==1&ndxRwd,1) = 1; C(Data.Custom.ChoiceLeft==0&ndxRwd,2) = 1;
     R = R.*C;
     set(GUIHandles.Axes.OutcomePlot.CumRwd, 'position', [iTrial+1 1], 'string', ...
